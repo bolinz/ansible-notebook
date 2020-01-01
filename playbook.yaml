@@ -1,0 +1,67 @@
+---
+- hosts: all
+  remote_user: vagrant
+  tasks:
+    - name: disable swap
+      shell: swapoff -a
+    - name: umount swap disk
+      replace: path=/etc/fstab regexp='swap'
+    - name: modprobe modules
+      modprobe: name={{item}} state=present
+      with_items:
+        [
+          br_netfilter,
+          ip6_udp_tunnel,
+          ip_set,
+          ip_set_hash_ip,
+          ip_set_hash_net,
+          iptable_filter,
+          iptable_nat,
+          iptable_mangle,
+          iptable_raw,
+          nf_conntrack_netlink,
+          nf_conntrack,
+          nf_conntrack_ipv4,
+          nf_defrag_ipv4,
+          nf_nat,
+          nf_nat_ipv4,
+          nf_nat_masquerade_ipv4,
+          nfnetlink,
+          udp_tunnel,
+          veth,
+          vxlan,
+          x_tables,
+          xt_addrtype,
+          xt_conntrack,
+          xt_comment,
+          xt_mark,
+          xt_multiport,
+          xt_nat,
+          xt_recent,
+          xt_set,
+          xt_statistic,
+          xt_tcpudp,
+        ]
+    - name: install docker require package
+      yum: 
+        name: ['yum-utils','device-mapper-persistent-data','lvm2'] 
+        state: latest
+    - name: add docker repo
+      shell: yum-config-manager --add-repo https://mirrors.huaweicloud.com/docker-ce/linux/centos/docker-ce.repo
+    - name: replace docker repo
+      replace: path=/etc/yum.repos.d/docker-ce.repo regexp='download.docker.com' replace='mirrors.tuna.tsinghua.edu.cn/docker-ce'
+    - name: install docker-ce
+      yum: name=docker-ce state=latest
+    - name: enable docker service and restart docker service
+      service: name=docker state=restarted enabled=yes
+    - name: add ops group
+      group: name=ops state=present
+    - name: add ops user
+      user: name=ops state=present groups='ops,wheel,docker' shell=/bin/bash password={{'ops'|password_hash('sha512')}}
+    - name: set sysctl
+      sysctl: name={{item.name}} state=present sysctl_file={{item.file}} value={{item.value}}
+      with_items:
+      - { name: net.bridge.bridge-nf-call-iptables,file: /etc/sysctl.d/net.bridge.bridgenf-call-iptables.conf ,value: 1}
+      - { name: net.bridge.bridge-nf-call-ip6tables,file: /etc/sysctl.d/net.bridge.bridgenf-call-ip6tables.conf ,value: 1}
+    - name: enable ssh tcp forwarding
+      lineinfile: path=/etc/ssh/sshd_config regexp='^AllowTcpForwarding ' line='AllowTcpForwarding yes'
