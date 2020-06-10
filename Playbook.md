@@ -106,6 +106,90 @@ ansible使用*动态*和*静态*两种方式复用内容。
 
 ## 变量
 
+**变量合法性**
+
+变量可以使用 字母，数字，及下划线，且必须以字母开头。
+
+YAML同时支持k-v结构的字典
+
+```yaml
+foo:
+    field: one
+    field: two
+```
+
+调用变量
+
+```yaml
+foo['field1']
+foo.field2
+```
+
+### 在仓库中定义变量
+
+### 在playbook定义变量
+
+```yaml
+- host: webservers
+  vars:
+      http_port: 80
+```
+
+### 在include 文件和roles中定义变量
+
+### 在jinja2中使用变量
+
+ ```jinja2
+ My app goes tp {{ max_amp_value }}
+ ```
+
+> ansible 允许在模板中使用jinja2的循环及条件，但无法在 playbooks 中使用。
+
+### 使用jinja2 过滤器转换变量
+
+根据YAML语法要求， 值以 {{ foo }} 开头时需要以双引号包含，以保证是一个YAML字典。
+
+错误的写法：
+
+```yaml
+- hosts: app_servers
+  vars:
+      app_path: {{ base_path }}/22
+```
+
+正确的写法：
+
+```yaml
+- hosts: app_servers
+  vars:
+      app_path: "{{ base_path }}/22"
+```
+
+### 系统发现变量: Facts
+
+Facts 是从远程系统中收集的信息。使用*ansible_facts*变量可以获取完整集合。大多数变量提升到了顶级变量域中，以ansible_开头；其他的下沉以避免冲突。此行为可以通过**INJECT_FACTS_AS_VARS**设置控制。
+
+在playbook 中加入以下内容查看哪些信息可用
+
+```yaml
+- debug: var=ansible_facts
+```
+
+也可以使用下面方法查看原始信息
+
+```shell
+ansible hostname -m setup
+```
+
+调用方法
+
+```jinja2
+{{ ansible_facts['devices']['xvda']['model'] }}
+{{ ansible_facts['nodename'] }}
+```
+
+
+
 ## 模板
 
 ## 条件
