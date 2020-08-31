@@ -2,16 +2,16 @@
 
 ansible 使用笔记
 
-## 安装
+## [安装](install.md)
 
-## 初次使用
+## [初次使用](Start.md)
 
-## 仓库
+## [仓库](Inverntory.md)
 
-## Ad-Hoc
+## [Ad-Hoc](Ad-Hoc.md)
 
-## Playbook
+## [Playbook](Playbook.md)
 
-## Vault
+## [Vault](Vault.md)
 
-## 命令行工具
+## [命令行工具](command-line-tools.md)
