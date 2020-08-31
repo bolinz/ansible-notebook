@@ -15,3 +15,5 @@ ansible 使用笔记
 ## [Vault](Vault.md)
 
 ## [命令行工具](command-line-tools.md)
+
+## [collections](collections.md)
