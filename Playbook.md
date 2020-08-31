@@ -196,7 +196,7 @@ ansible hostname -m setup
 
 ## 循环
 
-## 阻断
+## 块
 
 ## 高级特性
 
