@@ -16,6 +16,6 @@ ansible 使用笔记
 
 ## [命令行工具](command-line-tools.md)
 
-## [collections](collections.md)
+## [Collections](collections.md)
 
 ## [Development](development/development.md)
